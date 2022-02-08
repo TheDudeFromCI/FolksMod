@@ -1,0 +1,20 @@
+# Gradle
+.gradle/
+bin/
+build/
+
+#Eclipse
+*.classpath
+*.project
+*.prefs
+*.launch
+
+# General
+run/
+
+# Annotation Processing
+/.apt_generated_tests/
+/Users/
+.factorypath
+
+.vscode

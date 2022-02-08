@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[36,]"
+issueTrackerURL="${modIssues}"
+license="MIT"
+logoFile="mod_logo.png"
+logoBlur=false
+
+[[mods]]
+modId="${modId}"
+updateJSONURL="https://updates.blamejared.com/get?n=${modId}&gv=${mcVersion}"
+version="${file.jarVersion}"
+displayName="${modName}"
+displayURL="${modHomepage}"
+credits="${modCredits}"
+authors="${modAuthor}"
+description='''
+${modDescription}
+'''
+
+[["dependencies.${modId}"]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36,]"
+    ordering="NONE"
+    side="BOTH"
+
+[["dependencies.${modId}"]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[${mcVersionMin},${mcVersion}]"
+    ordering="NONE"
+    side="BOTH"
