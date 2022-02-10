@@ -1,3 +1,3 @@
-# Example Mod
+# Folks
 
-This is a modding template tweaked for TheDudeFromCI's usage.
+A kingdom management mod for Minecraft with a strong focus on NPC development and personality.
