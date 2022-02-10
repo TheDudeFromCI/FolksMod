@@ -16,12 +16,12 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 @Mod(ExampleMod.MOD_ID)
-public class ExampleMod {
+public class Folks {
 
-    public static final String MOD_ID = "examplemod";
-    public static final Logger LOGGER = LogManager.getLogger("Example Mod");
+    public static final String MOD_ID = "folks";
+    public static final Logger LOGGER = LogManager.getLogger();
 
-    public ExampleMod() {
+    public Folks() {
 
         final ModFileInfo modEntry = (ModFileInfo) ModList.get().getModFileById(MOD_ID);
 
