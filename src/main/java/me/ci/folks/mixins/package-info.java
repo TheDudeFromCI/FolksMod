@@ -1,1 +1,1 @@
-package me.ci.folks;
+package me.ci.folks.mixins;
