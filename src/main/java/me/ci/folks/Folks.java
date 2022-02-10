@@ -1,4 +1,4 @@
-package me.ci.examplemod;
+package me.ci.folks;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-@Mod(ExampleMod.MOD_ID)
+@Mod(Folks.MOD_ID)
 public class Folks {
 
     public static final String MOD_ID = "folks";
@@ -23,7 +23,7 @@ public class Folks {
 
     public Folks() {
 
-        final ModFileInfo modEntry = (ModFileInfo) ModList.get().getModFileById(MOD_ID);
+        final ModFileInfo modEntry = ModList.get().getModFileById(MOD_ID);
 
         for (final IModInfo modInfo : modEntry.getMods()) {
 
