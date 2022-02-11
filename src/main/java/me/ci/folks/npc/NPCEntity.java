@@ -2,6 +2,7 @@ package me.ci.folks.npc;
 
 import java.util.Arrays;
 
+import me.ci.folks.ai.goals.MoveToPositionGoal;
 import me.ci.folks.registry.ModEntities;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.MobEntity;
@@ -22,12 +23,13 @@ import net.minecraft.world.World;
 public class NPCEntity extends CreatureEntity {
 
     private final NPCInventory inventory;
+    private MoveToPositionGoal moveToPositionGoal;
     private String name;
 
     public NPCEntity(World world, String name) {
         super(ModEntities.NPC, world);
 
-        inventory = new NPCInventory(this, 36, 4);
+        this.inventory = new NPCInventory(this, 36, 4);
 
         setCustomNameVisible(true);
         setPersistenceRequired();
@@ -46,20 +48,21 @@ public class NPCEntity extends CreatureEntity {
 
     @Override
     public Iterable<ItemStack> getArmorSlots() {
-        return Arrays.asList(inventory.getItem(inventory.getArmorSlot(NPCInventory.HEAD_SLOT)),
-                inventory.getItem(inventory.getArmorSlot(NPCInventory.BODY_SLOT)),
-                inventory.getItem(inventory.getArmorSlot(NPCInventory.LEGS_SLOT)),
-                inventory.getItem(inventory.getArmorSlot(NPCInventory.FEET_SLOT)));
+        return Arrays.asList(
+                this.inventory.getItem(this.inventory.getArmorSlot(NPCInventory.HEAD_SLOT)),
+                this.inventory.getItem(this.inventory.getArmorSlot(NPCInventory.BODY_SLOT)),
+                this.inventory.getItem(this.inventory.getArmorSlot(NPCInventory.LEGS_SLOT)),
+                this.inventory.getItem(this.inventory.getArmorSlot(NPCInventory.FEET_SLOT)));
     }
 
     @Override
     public ItemStack getItemBySlot(EquipmentSlotType type) {
-        return inventory.getItem(inventory.getItemSlotByType(type));
+        return this.inventory.getItem(this.inventory.getItemSlotByType(type));
     }
 
     @Override
     public void setItemSlot(EquipmentSlotType type, ItemStack item) {
-        inventory.setItem(inventory.getItemSlotByType(type), item);
+        this.inventory.setItem(this.inventory.getItemSlotByType(type), item);
     }
 
     @Override
@@ -81,10 +84,13 @@ public class NPCEntity extends CreatureEntity {
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(0, new SwimGoal(this));
-        goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0, 120));
-        goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 8f, 1f));
-        goalSelector.addGoal(8, new LookRandomlyGoal(this));
+        this.moveToPositionGoal = new MoveToPositionGoal(this);
+
+        this.goalSelector.addGoal(0, this.moveToPositionGoal);
+        this.goalSelector.addGoal(1, new SwimGoal(this));
+        this.goalSelector.addGoal(6, new WaterAvoidingRandomWalkingGoal(this, 1.0, 120));
+        this.goalSelector.addGoal(7, new LookAtGoal(this, PlayerEntity.class, 8f, 1f));
+        this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
     }
 
     public String getNPCName() {
@@ -94,5 +100,9 @@ public class NPCEntity extends CreatureEntity {
     public void setNPCName(String name) {
         this.name = name;
         setCustomName(new StringTextComponent(name));
+    }
+
+    public void walkTo(double x, double y, double z) {
+        this.moveToPositionGoal.setTarget(x, y, z);
     }
 }
