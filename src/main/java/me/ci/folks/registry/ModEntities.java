@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 @Mod.EventBusSubscriber(modid = Folks.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -24,12 +25,14 @@ public class ModEntities {
             .build("npc")
             .setRegistryName(new ResourceLocation(Folks.MOD_ID, "npc"));
 
-    public static void register(Register<EntityType<?>> event) {
+    @SubscribeEvent
+    public static void registerEntities(Register<EntityType<?>> event) {
         event.getRegistry().register(NPC);
     }
 
+    @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public static void registerRenderers() {
+    public static void registerRenderers(FMLClientSetupEvent event) {
         RenderingRegistry.registerEntityRenderingHandler(NPC, NPCRenderer::new);
     }
 
