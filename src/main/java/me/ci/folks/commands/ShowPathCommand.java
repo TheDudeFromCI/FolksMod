@@ -33,17 +33,24 @@ public class ShowPathCommand {
 
         PathfindingTask task = new PathfindingTask(start, goal, movementTypes);
 
+        long startTime = System.currentTimeMillis();
+
         Path path = null;
         while (path == null) {
             task.tick();
             path = task.getPath();
         }
 
+        long ms = System.currentTimeMillis() - startTime;
+
         PathRenderingDebug.renderPath(path);
 
         context.getSource().getEntity()
-            .sendMessage(new StringTextComponent("Found path with " + path.getSize() + " nodes.")
-                .withStyle(TextFormatting.GREEN), Util.NIL_UUID);
+            .sendMessage(
+                new StringTextComponent("Found path with " + path.getSize() + " nodes in " + ms + "ms. Path type: "
+                    + path.getPathType().toString().toLowerCase())
+                        .withStyle(TextFormatting.GREEN),
+                Util.NIL_UUID);
 
         return 1;
     }

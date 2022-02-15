@@ -29,8 +29,8 @@ public class PathfindingTask {
 
         Node startNode = new Node(start);
         startNode.setGScore(0);
-        startNode.setHeuristic(goal.getHeuristic(startNode));
-        heap.add(startNode);
+        startNode.setHeuristic(this.goal.getHeuristic(startNode));
+        this.heap.add(startNode);
     }
 
     public void tick() {
@@ -69,7 +69,7 @@ public class PathfindingTask {
             double tScore = current.getGScore() + edge.distance;
 
             if (tScore < edge.child.getGScore()) {
-                edge.child.setParent(edge);
+                edge.child.setIncomingEdge(edge);
                 edge.child.setGScore(tScore);
                 edge.child.setHeuristic(this.goal.getHeuristic(edge.child));
                 this.heap.add(edge.child);

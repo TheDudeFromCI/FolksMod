@@ -1,7 +1,9 @@
 package me.ci.folks.ai.pathfinding.goals;
 
+import me.ci.folks.Folks;
 import me.ci.folks.ai.pathfinding.IPathfindingGoal;
 import me.ci.folks.ai.pathfinding.Node;
+import net.minecraft.dispenser.IPosition;
 import net.minecraft.util.math.BlockPos;
 
 public class MoveToPositionGoal implements IPathfindingGoal {
@@ -9,7 +11,7 @@ public class MoveToPositionGoal implements IPathfindingGoal {
     private final float radius;
 
     public MoveToPositionGoal(BlockPos position) {
-        this(position, 0f);
+        this(position, 0.5f);
     }
 
     public MoveToPositionGoal(BlockPos position, float radius) {
@@ -24,7 +26,8 @@ public class MoveToPositionGoal implements IPathfindingGoal {
 
     @Override
     public boolean isGoal(Node node) {
-        return node.getPosition().distSqr(this.position) <= this.radius * this.radius;
+        return node.getPosition().distSqr(this.position.getX(), this.position.getY(), this.position.getZ(),
+            false) <= this.radius * this.radius;
     }
 
 }

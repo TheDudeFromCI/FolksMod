@@ -31,7 +31,7 @@ public class PathRenderingDebug {
     @SubscribeEvent
     @SuppressWarnings({ "resource" })
     public static void renderPath(RenderWorldLastEvent event) {
-        if (PathRenderingDebug.pathToRender == null)
+        if (PathRenderingDebug.pathToRender == null || PathRenderingDebug.pathToRender.getSize() == 0)
             return;
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -42,6 +42,7 @@ public class PathRenderingDebug {
         matrixStack.pushPose();
         matrixStack.translate(-projectedView.x, -projectedView.y, -projectedView.z);
         RenderSystem.lineWidth(2);
+        RenderSystem.disableDepthTest();
 
         Matrix4f matrix = matrixStack.last().pose();
 
@@ -50,6 +51,7 @@ public class PathRenderingDebug {
         tessellator.end();
 
         RenderSystem.lineWidth(1);
+        RenderSystem.enableDepthTest();
         matrixStack.popPose();
     }
 

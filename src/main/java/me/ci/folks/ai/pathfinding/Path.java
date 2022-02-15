@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public class Path {
 
     public enum PathType {
@@ -13,13 +15,13 @@ public class Path {
     private final List<NodeEdge> nodes = new ArrayList<>();
     private final PathType type;
 
-    public Path(PathType type, Node leafNode) {
+    public Path(PathType type, @Nonnull Node leafNode) {
         this.type = type;
 
-        NodeEdge edge = leafNode.getParent();
+        NodeEdge edge = leafNode.getIncomingEdge();
         while (edge != null) {
             this.nodes.add(edge);
-            edge = edge.parent.getParent();
+            edge = edge.parent.getIncomingEdge();
         }
 
         Collections.reverse(this.nodes);
