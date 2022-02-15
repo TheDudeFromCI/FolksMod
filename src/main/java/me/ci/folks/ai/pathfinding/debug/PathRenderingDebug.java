@@ -29,6 +29,7 @@ public class PathRenderingDebug {
     }
 
     @SubscribeEvent
+    @SuppressWarnings({ "resource" })
     public static void renderPath(RenderWorldLastEvent event) {
         if (PathRenderingDebug.pathToRender == null)
             return;
