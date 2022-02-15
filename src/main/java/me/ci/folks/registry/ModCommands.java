@@ -29,9 +29,12 @@ public final class ModCommands {
                     .executes(wrapCommand(MoveToCommand::execute)))))
 
         // Usage: /folks showPath <position>
+        // Usage: /folks showPath clear
         .then(Commands.literal("showPath")
             .then(Commands.argument("position", BlockPosArgument.blockPos())
-                .executes(wrapCommand(ShowPathCommand::execute))))
+                .executes(wrapCommand(ShowPathCommand::execute)))
+            .then(Commands.literal("clear")
+                .executes(wrapCommand(ShowPathCommand::clear))))
 
         // Usage: /folks
         .executes(FolksCommand::execute);

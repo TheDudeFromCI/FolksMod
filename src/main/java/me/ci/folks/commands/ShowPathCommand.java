@@ -43,7 +43,7 @@ public class ShowPathCommand {
 
         long ms = System.currentTimeMillis() - startTime;
 
-        PathRenderingDebug.renderPath(path);
+        PathRenderingDebug.setPath(path);
 
         context.getSource().getEntity()
             .sendMessage(
@@ -52,6 +52,12 @@ public class ShowPathCommand {
                         .withStyle(TextFormatting.GREEN),
                 Util.NIL_UUID);
 
+        return 1;
+    }
+
+    @SuppressWarnings({ "unused" })
+    public static int clear(CommandContext<CommandSource> context) {
+        PathRenderingDebug.setPath(null);
         return 1;
     }
 }

@@ -1,5 +1,7 @@
 package me.ci.folks.ai.pathfinding.debug;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -23,9 +25,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class PathRenderingDebug {
     private static Path pathToRender;
 
-    public static void renderPath(Path path) {
+    public static void setPath(@Nullable Path path) {
         PathRenderingDebug.pathToRender = path;
-        Folks.LOGGER.debug("Updated debug render path. Rendering {} nodes.", path.getSize());
+
+        if (path != null)
+            Folks.LOGGER.debug("Updated debug pathfinding renderer. Rendering {} nodes.", path.getSize());
+        else
+            Folks.LOGGER.debug("Clearing debug pathfinding renderer.");
     }
 
     @SubscribeEvent

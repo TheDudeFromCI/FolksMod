@@ -1,9 +1,7 @@
 package me.ci.folks.ai.pathfinding.goals;
 
-import me.ci.folks.Folks;
 import me.ci.folks.ai.pathfinding.IPathfindingGoal;
 import me.ci.folks.ai.pathfinding.Node;
-import net.minecraft.dispenser.IPosition;
 import net.minecraft.util.math.BlockPos;
 
 public class MoveToPositionGoal implements IPathfindingGoal {
