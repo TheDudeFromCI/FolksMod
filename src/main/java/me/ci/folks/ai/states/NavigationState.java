@@ -3,6 +3,7 @@ package me.ci.folks.ai.states;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.ci.folks.ai.pathfinding.EntityPathHandler;
 import me.ci.folks.ai.pathfinding.IMovement;
 import me.ci.folks.ai.pathfinding.IPathfindingGoal;
 import me.ci.folks.ai.pathfinding.Path;
@@ -16,15 +17,17 @@ public class NavigationState implements IState {
 
     private static final int PATHFINDING_NODES_PER_TICK = 64;
 
-    private final NPCEntity entity;
+    private final EntityPathHandler pathHandler;
+    private final NPCEntity npc;
     private final List<IMovement> movementTypes = new ArrayList<>();
     private PathfindingTask pathfinder;
     private IPathfindingGoal goal;
     private boolean active;
 
-    public NavigationState(NPCEntity entity) {
-        this.entity = entity;
-        addMovementType(new BasicMovement(entity));
+    public NavigationState(NPCEntity npc, EntityPathHandler pathHandler) {
+        this.npc = npc;
+        this.pathHandler = pathHandler;
+        addMovementType(new BasicMovement(npc));
     }
 
     public void addMovementType(IMovement movement) {
@@ -45,13 +48,14 @@ public class NavigationState implements IState {
 
     @Override
     public void onStateExit() {
-        this.entity.setCurrentPath(null);
+        this.pathHandler.setPath(null);
+        this.pathfinder = null;
+        this.goal = null;
     }
 
     @Override
     public void onInterrupt() {
-        this.pathfinder = null;
-        this.entity.setCurrentPath(null);
+        onStateExit();
     }
 
     @Override
@@ -69,21 +73,23 @@ public class NavigationState implements IState {
         }
 
         if (path == null) {
-            Path currentPath = this.entity.getCurrentPath();
+            Path currentPath = this.pathHandler.getPath();
             if (currentPath != null && currentPath.getEnd().equals(this.pathfinder.getBestNode()))
                 return; // Keep on current partial path
             else {
                 path = this.pathfinder.getPartialPath();
                 resetPath();
             }
+        } else {
+            this.pathfinder = null;
         }
 
-        this.entity.setCurrentPath(path);
+        this.pathHandler.setPath(path);
     }
 
     @Override
     public boolean isDone() {
-        return this.entity.getCurrentPath() == null;
+        return this.pathHandler.getPath() == null;
     }
 
     @Override
@@ -107,8 +113,12 @@ public class NavigationState implements IState {
             return;
         }
 
-        BlockPos start = new BlockPos(this.entity.position());
+        BlockPos start = new BlockPos(this.npc.position());
         this.pathfinder = new PathfindingTask(start, goal, this.movementTypes);
+    }
+
+    public boolean hasGoal() {
+        return this.goal != null;
     }
 
 }

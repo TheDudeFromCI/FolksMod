@@ -3,11 +3,12 @@ package me.ci.folks.ai.statemachine;
 public class Transition {
     private final IState parent;
     private final IState child;
-    private boolean triggered;
+    private final TransitionActivator activator;
 
-    public Transition(IState parent, IState child) {
+    public Transition(IState parent, IState child, TransitionActivator activator) {
         this.parent = parent;
         this.child = child;
+        this.activator = activator;
     }
 
     public IState getParentState() {
@@ -18,29 +19,8 @@ public class Transition {
         return this.child;
     }
 
-    public boolean isTriggered() {
+    public void forceTrigger() {
         if (!this.parent.isActive())
-            return false;
-
-        return this.parent.isDone() || this.triggered;
-    }
-
-    public void trigger() {
-        if (!this.parent.isActive())
-            return;
-
-        if (this.parent.isInterruptible()) {
-            this.triggered = true;
-            tryTrigger();
-        }
-    }
-
-    public void tick() {
-        tryTrigger();
-    }
-
-    private void tryTrigger() {
-        if (!isTriggered())
             return;
 
         if (this.parent.isDone())
@@ -52,5 +32,20 @@ public class Transition {
 
         this.child.setActive(true);
         this.child.onStateEnter();
+    }
+
+    private boolean isTriggered() {
+        return this.parent.isActive()
+            && (this.parent.isInterruptible() || this.parent.isDone())
+            && this.activator.requirementsMet(this);
+    }
+
+    public void tick() {
+        if (isTriggered())
+            forceTrigger();
+    }
+
+    public TransitionActivator getActivator() {
+        return this.activator;
     }
 }

@@ -2,10 +2,7 @@ package me.ci.folks.npc;
 
 import java.util.Arrays;
 
-import javax.annotation.Nullable;
-
-import me.ci.folks.ai.pathfinding.EntityPathHandler;
-import me.ci.folks.ai.pathfinding.Path;
+import me.ci.folks.ai.commands.MoveToPositionCmd;
 import me.ci.folks.registry.ModEntities;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.MobEntity;
@@ -20,18 +17,20 @@ import net.minecraft.world.World;
 public class NPCEntity extends CreatureEntity {
 
     private final NPCInventory inventory;
-    private final EntityPathHandler pathHandler;
+    private final NPCController controller;
     private String name;
 
     public NPCEntity(World world, String name) {
         super(ModEntities.NPC, world);
 
         this.inventory = new NPCInventory(this, 36, 4);
-        this.pathHandler = new EntityPathHandler(this);
+        this.controller = new NPCController(this);
 
         setCustomNameVisible(true);
         setPersistenceRequired();
         setNPCName(name);
+
+        this.controller.addCommand(new MoveToPositionCmd());
     }
 
     @Override
@@ -72,8 +71,7 @@ public class NPCEntity extends CreatureEntity {
     public static AttributeModifierMap.MutableAttribute createNPCAttributes() {
         return MobEntity.createMobAttributes()
             .add(Attributes.MOVEMENT_SPEED, 0.5)
-            .add(Attributes.ATTACK_DAMAGE, 0.5)
-            .add(Attributes.FOLLOW_RANGE, 32.0);
+            .add(Attributes.ATTACK_DAMAGE, 0.5);
     }
 
     public String getNPCName() {
@@ -85,18 +83,17 @@ public class NPCEntity extends CreatureEntity {
         setCustomName(new StringTextComponent(name));
     }
 
-    public void setCurrentPath(@Nullable Path path) {
-        this.pathHandler.setPath(path);
-    }
-
-    @Nullable
-    public Path getCurrentPath() {
-        return this.pathHandler.getPath();
-    }
-
     @Override
     public void tick() {
+        this.controller.tick();
         super.tick();
-        this.pathHandler.tick();
+    }
+
+    public NPCController getController() {
+        return this.controller;
+    }
+
+    public void runCommand(String... args) {
+        this.controller.runCommand(args);
     }
 }
