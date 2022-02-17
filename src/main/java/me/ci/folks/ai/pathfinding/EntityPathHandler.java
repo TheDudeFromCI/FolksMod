@@ -17,12 +17,17 @@ public class EntityPathHandler {
         this.mob = mob;
     }
 
-    public void setPath(Path path) {
-        if (path.getSize() == 0)
+    public void setPath(@Nullable Path path) {
+        if (path == null || path.getSize() == 0)
             path = null;
 
         this.path = path;
         this.nodeIndex = 0;
+    }
+
+    @Nullable
+    public Path getPath() {
+        return this.path;
     }
 
     public void tick() {

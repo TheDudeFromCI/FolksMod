@@ -49,6 +49,7 @@ public class PathfindingTask {
             this.bestNode = current;
 
         if (this.goal.isGoal(current)) {
+            this.bestNode = current;
             this.path = new Path(PathType.COMPLETE, current);
             return;
         }
@@ -81,5 +82,13 @@ public class PathfindingTask {
     @Nullable
     public Path getPath() {
         return this.path;
+    }
+
+    public Path getPartialPath() {
+        return new Path(PathType.PARTIAL, this.bestNode);
+    }
+
+    public Node getBestNode() {
+        return this.bestNode;
     }
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import me.ci.folks.ai.pathfinding.IMovement;
 import me.ci.folks.ai.pathfinding.Node;
 import me.ci.folks.ai.pathfinding.NodeEdge;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
@@ -14,10 +15,10 @@ import net.minecraft.world.World;
 public class BasicMovement implements IMovement {
 
     private static final int MAX_FALL_DISTANCE = 3;
-    private final World world;
+    private final Entity entity;
 
-    public BasicMovement(World world) {
-        this.world = world;
+    public BasicMovement(Entity entity) {
+        this.entity = entity;
     }
 
     @Override
@@ -60,13 +61,15 @@ public class BasicMovement implements IMovement {
     }
 
     private boolean canStandOnBlock(BlockPos pos) {
-        VoxelShape col = this.world.getBlockState(pos).getCollisionShape(this.world, pos);
+        World world = this.entity.level;
+        VoxelShape col = world.getBlockState(pos).getCollisionShape(world, pos);
         double maxY = col.max(Axis.Y);
         return maxY >= 0.9 && maxY <= 1.1;
     }
 
     private boolean canStandInBlock(BlockPos pos) {
-        VoxelShape col = this.world.getBlockState(pos).getCollisionShape(this.world, pos);
+        World world = this.entity.level;
+        VoxelShape col = world.getBlockState(pos).getCollisionShape(world, pos);
         return col.isEmpty();
     }
 

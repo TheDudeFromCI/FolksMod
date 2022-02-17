@@ -29,7 +29,7 @@ public class ShowPathCommand {
         IPathfindingGoal goal = new MoveToPositionGoal(targetPos);
 
         List<IMovement> movementTypes = new ArrayList<>();
-        movementTypes.add(new BasicMovement(context.getSource().getLevel()));
+        movementTypes.add(new BasicMovement(context.getSource().getEntity()));
 
         PathfindingTask task = new PathfindingTask(start, goal, movementTypes);
 

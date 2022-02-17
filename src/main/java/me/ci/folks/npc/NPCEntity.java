@@ -1,16 +1,11 @@
 package me.ci.folks.npc;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
+import javax.annotation.Nullable;
 
 import me.ci.folks.ai.pathfinding.EntityPathHandler;
-import me.ci.folks.ai.pathfinding.IMovement;
-import me.ci.folks.ai.pathfinding.IPathfindingGoal;
 import me.ci.folks.ai.pathfinding.Path;
-import me.ci.folks.ai.pathfinding.PathfindingTask;
-import me.ci.folks.ai.pathfinding.goals.MoveToPositionGoal;
-import me.ci.folks.ai.pathfinding.movements.BasicMovement;
 import me.ci.folks.registry.ModEntities;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.MobEntity;
@@ -18,9 +13,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
 import net.minecraft.util.HandSide;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
@@ -92,22 +85,13 @@ public class NPCEntity extends CreatureEntity {
         setCustomName(new StringTextComponent(name));
     }
 
-    public void walkTo(double x, double y, double z) {
-        List<IMovement> movementTypes = new ArrayList<>();
-        movementTypes.add(new BasicMovement(this.level));
-
-        BlockPos start = getOnPos().relative(Direction.UP, 1);
-        IPathfindingGoal goal = new MoveToPositionGoal(new BlockPos(x, y, z));
-
-        PathfindingTask task = new PathfindingTask(start, goal, movementTypes);
-
-        Path path = null;
-        while (path == null) {
-            task.tick();
-            path = task.getPath();
-        }
-
+    public void setCurrentPath(@Nullable Path path) {
         this.pathHandler.setPath(path);
+    }
+
+    @Nullable
+    public Path getCurrentPath() {
+        return this.pathHandler.getPath();
     }
 
     @Override

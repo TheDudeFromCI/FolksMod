@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 public class Path {
 
     public enum PathType {
-        COMPLETE, NO_PATH, TOO_FAR
+        COMPLETE, NO_PATH, TOO_FAR, PARTIAL
     }
 
     private final List<NodeEdge> nodes = new ArrayList<>();
@@ -32,10 +32,18 @@ public class Path {
     }
 
     public int getSize() {
-        return nodes.size();
+        return this.nodes.size();
     }
 
     public NodeEdge getElement(int index) {
-        return nodes.get(index);
+        return this.nodes.get(index);
+    }
+
+    public Node getStart() {
+        return this.nodes.get(0).parent;
+    }
+
+    public Node getEnd() {
+        return this.nodes.get(this.nodes.size() - 1).child;
     }
 }
