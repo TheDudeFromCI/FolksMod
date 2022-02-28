@@ -12,7 +12,7 @@ public abstract class StateMachine {
     protected final List<IState> states = new ArrayList<>();
     protected final List<Transition> transitions = new ArrayList<>();
     protected final Map<String, Transition> manualTransitions = new HashMap<>();
-    protected final IState entryState = new IdleState();
+    protected final IState entryState = new IdleState("start");
 
     protected StateMachine() {
         addState(this.entryState);

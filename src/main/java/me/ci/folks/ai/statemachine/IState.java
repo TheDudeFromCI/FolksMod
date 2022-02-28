@@ -5,7 +5,16 @@ import me.ci.folks.utils.StringUtils;
 public interface IState {
 
     default String getName() {
-        return StringUtils.toCamelCase(getClass().getSimpleName());
+        String className = getClass().getSimpleName();
+
+        if (className.endsWith("State"))
+            className = className.substring(0, className.length() - 5);
+
+        return StringUtils.toSnakeCase(className);
+    }
+
+    default String getPath() {
+        return getName();
     }
 
     default void onStateEnter() {

@@ -2,27 +2,31 @@ package me.ci.folks.ai.pathfinding;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.MobEntity;
+import me.ci.folks.npc.NPCEntity;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class EntityPathHandler {
 
-    private final MobEntity mob;
+    private final NPCEntity npc;
 
     @Nullable
     private Path path;
     private int nodeIndex;
 
-    public EntityPathHandler(MobEntity mob) {
-        this.mob = mob;
+    public EntityPathHandler(NPCEntity npc) {
+        this.npc = npc;
     }
 
     public void setPath(@Nullable Path path) {
         if (path == null || path.getSize() == 0)
             path = null;
 
+        if (this.path == path)
+            return;
+
         this.path = path;
         this.nodeIndex = 0;
+        this.npc.sendDebugPacket();
     }
 
     @Nullable
@@ -36,7 +40,7 @@ public class EntityPathHandler {
 
         Node node = this.path.getElement(this.nodeIndex).child;
         Vector3d target = node.toVector();
-        this.mob.getMoveControl().setWantedPosition(target.x, target.y, target.z, 1);
+        this.npc.getMoveControl().setWantedPosition(target.x, target.y, target.z, 1);
 
         if (isAtNode(node)) {
             this.nodeIndex++;
@@ -50,6 +54,6 @@ public class EntityPathHandler {
     }
 
     private boolean isAtNode(Node node) {
-        return this.mob.position().distanceToSqr(node.toVector()) < 0.1;
+        return this.npc.position().distanceToSqr(node.toVector()) < 0.1;
     }
 }

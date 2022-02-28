@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import me.ci.folks.ai.commands.ICommand;
+import me.ci.folks.ai.pathfinding.AsyncPathfinder;
 import me.ci.folks.ai.pathfinding.EntityPathHandler;
 import me.ci.folks.ai.pathfinding.IPathfindingGoal;
+import me.ci.folks.ai.pathfinding.Path;
 import me.ci.folks.ai.statemachine.StateMachine;
 import me.ci.folks.ai.statemachine.StateMachineBuilder;
 import me.ci.folks.ai.statemachine.TransitionActivator;
@@ -17,6 +21,7 @@ public class NPCController {
     private final List<ICommand> commands = new ArrayList<>();
     private final List<String[]> commandQueue = new LinkedList<>();
     private final StateMachine stateMachine;
+    private final AsyncPathfinder pathfinder;
     private final EntityPathHandler pathHandler;
     private final NPCEntity npc;
     private final IdleState idleState;
@@ -24,10 +29,11 @@ public class NPCController {
 
     public NPCController(NPCEntity npc) {
         this.npc = npc;
+        this.pathfinder = new AsyncPathfinder(npc);
         this.pathHandler = new EntityPathHandler(npc);
 
         this.idleState = new IdleState();
-        this.navigationState = new NavigationState(this.npc, this.pathHandler);
+        this.navigationState = new NavigationState(this.pathHandler, this.pathfinder);
 
         this.stateMachine = new StateMachineBuilder("root")
             .addState("idle", idleState)
@@ -48,6 +54,17 @@ public class NPCController {
 
     public void tick() {
         this.stateMachine.tick();
+        this.pathfinder.tick();
+
+        String currentState = this.stateMachine.getActiveState().getPath();
+        String lastState = this.npc.getDebugInfo().getState();
+
+        if (!currentState.equals(lastState)) {
+            this.npc.getDebugInfo().setState(currentState);
+            this.npc.sendDebugPacket();
+        }
+
+        this.pathHandler.setPath(this.pathfinder.getPath());
         this.pathHandler.tick();
 
         if (this.stateMachine.getActiveState() == this.idleState
@@ -79,5 +96,10 @@ public class NPCController {
 
     public void setNavigationGoal(IPathfindingGoal goal) {
         this.navigationState.setGoal(goal);
+    }
+
+    @Nullable
+    public Path getCurrentPath() {
+        return this.pathHandler.getPath();
     }
 }

@@ -2,7 +2,7 @@ package me.ci.folks.utils;
 
 public final class StringUtils {
 
-    public static String toCamelCase(String s) {
+    public static String toSnakeCase(String s) {
         StringBuilder sb = new StringBuilder();
 
         char[] c = s.toCharArray();
@@ -11,7 +11,7 @@ public final class StringUtils {
                 && !(i + 1 < c.length && Character.isUpperCase(c[i])))
                 sb.append('_');
 
-            sb.append(c[i]);
+            sb.append(Character.toLowerCase(c[i]));
         }
 
         return sb.toString();

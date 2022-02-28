@@ -4,7 +4,7 @@ import me.ci.folks.ai.states.IdleState;
 
 public class ComplexState extends StateMachine implements IState {
 
-    private final IState exitState = new IdleState();
+    private final IState exitState = new IdleState("end");
     private final String name;
     private boolean active;
 
@@ -18,6 +18,19 @@ public class ComplexState extends StateMachine implements IState {
     @Override
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public String getPath() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getName());
+
+        if (isActive()) {
+            sb.append(" > ");
+            sb.append(getActiveState().getName());
+        }
+
+        return sb.toString();
     }
 
     public IState getExitState() {
@@ -70,19 +83,6 @@ public class ComplexState extends StateMachine implements IState {
     @Override
     public boolean isInterruptible() {
         return getActiveState().isInterruptible();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getName());
-
-        if (isActive()) {
-            sb.append(" > ");
-            sb.append(getActiveState().getName());
-        }
-
-        return sb.toString();
     }
 
 }

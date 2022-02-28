@@ -3,7 +3,10 @@ package me.ci.folks.npc;
 import java.util.Arrays;
 
 import me.ci.folks.ai.commands.MoveToPositionCmd;
+import me.ci.folks.ai.pathfinding.Path;
+import me.ci.folks.network.NPCDebugInfoPacket;
 import me.ci.folks.registry.ModEntities;
+import me.ci.folks.registry.ModNetwork;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
@@ -11,13 +14,16 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class NPCEntity extends CreatureEntity {
 
     private final NPCInventory inventory;
     private final NPCController controller;
+    private final NPCDebug debug;
     private String name;
 
     public NPCEntity(World world, String name) {
@@ -25,6 +31,7 @@ public class NPCEntity extends CreatureEntity {
 
         this.inventory = new NPCInventory(this, 36, 4);
         this.controller = new NPCController(this);
+        this.debug = new NPCDebug();
 
         setCustomNameVisible(true);
         setPersistenceRequired();
@@ -85,7 +92,9 @@ public class NPCEntity extends CreatureEntity {
 
     @Override
     public void tick() {
-        this.controller.tick();
+        if (!this.level.isClientSide) {
+            this.controller.tick();
+        }
         super.tick();
     }
 
@@ -95,5 +104,38 @@ public class NPCEntity extends CreatureEntity {
 
     public void runCommand(String... args) {
         this.controller.runCommand(args);
+    }
+
+    public NPCDebug getDebugInfo() {
+        return this.debug;
+    }
+
+    public void sendDebugPacket() {
+        Path realPath = getController().getCurrentPath();
+        float[] path = new float[realPath == null ? 0 : (realPath.getSize() + 1) * 3];
+
+        if (realPath != null) {
+
+            int index = 0;
+            BlockPos pos;
+
+            for (int i = -1; i < realPath.getSize(); i++) {
+                if (i == -1)
+                    pos = realPath.getStart().getPosition();
+                else
+                    pos = realPath.getElement(i).child.getPosition();
+
+                path[index++] = pos.getX() + 0.5f;
+                path[index++] = pos.getY() + 0.01f;
+                path[index++] = pos.getZ() + 0.5f;
+            }
+        }
+
+        NPCDebugInfoPacket packet = new NPCDebugInfoPacket(getUUID(),
+            getNPCName(),
+            getController().getStateMachine().getActiveState().getPath(),
+            path);
+
+        ModNetwork.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> this), packet);
     }
 }
